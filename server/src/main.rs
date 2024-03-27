@@ -22,6 +22,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(db_data)
             .service(get_task_request)
             .service(get_tasks_request)
+            .service(get_filter_request)
     })
     .bind(("127.0.0.1", 8888))?
     .run()
@@ -30,7 +31,7 @@ async fn main() -> std::io::Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use common::backend::*;
+    use common::{backend::*, Filter};
 
     #[test]
     fn test_main() {
@@ -103,5 +104,42 @@ mod tests {
         assert!(resp[0].as_ref().is_ok_and(|a| a.task_id == 1));
         assert!(resp[1].as_ref().is_ok_and(|a| a.task_id == 2));
         assert!(resp[2].is_err());
+    }
+
+    #[actix_web::test]
+    async fn filter_request() {
+        use actix_web::test;
+        use sea_orm::MockDatabase;
+
+        let db = MockDatabase::new(sea_orm::DatabaseBackend::Postgres);
+        let db_conn = db
+            .append_query_results([vec![
+                database::task::Model {
+                    id: 1,
+                    title: "heyo".to_owned(),
+                    completed: true,
+                    last_edited: chrono::NaiveDateTime::default(),
+                },
+                database::task::Model {
+                    id: 2,
+                    title: "heyo".to_owned(),
+                    completed: true,
+                    last_edited: chrono::NaiveDateTime::default(),
+                },
+            ]])
+            .into_connection();
+        let db_data: Data<DatabaseConnection> = Data::new(db_conn);
+        let app =
+            test::init_service(App::new().app_data(db_data).service(get_filter_request)).await;
+        let req = test::TestRequest::default()
+            .set_json(FilterRequest {
+                filter: Filter::None,
+            })
+            .uri("/filter")
+            .to_request();
+        let resp: FilterResponse = test::call_and_read_body_json(&app, req).await;
+
+        assert_eq!(resp[0], 1);
+        assert_eq!(resp[1], 2);
     }
 }
