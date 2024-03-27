@@ -27,7 +27,7 @@ pub struct ReadTaskShortRequest {
     pub task_id: TaskID,
 }
 /// response to GET /task
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct ReadTaskShortResponse {
     /// task id of response, should be the same as request
     pub task_id: TaskID,
@@ -44,10 +44,10 @@ pub struct ReadTaskShortResponse {
     /// last time this task was edited
     pub last_edited: chrono::NaiveDateTime,
 }
-/// request for reading multiple tasks
+/// request to GET /tasks, just list of GET /task requests
 pub type ReadTasksShortRequest = Vec<ReadTaskShortRequest>;
-/// response for reading multiple tasks
-pub type ReadTasksShortResponse = Vec<ReadTaskShortResponse>;
+/// response to GET /tasks, just list of GET /task responses
+pub type ReadTasksShortResponse = Vec<Result<ReadTaskShortResponse, String>>;
 
 /// reqwest::put("/task")
 struct UpdateTaskRequest {
