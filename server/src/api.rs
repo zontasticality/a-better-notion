@@ -1,10 +1,9 @@
-use actix_web::{get, web, HttpResponse, Responder, ResponseError, Result};
+use actix_web::{get, web, Responder, Result};
 use common::backend::*;
 use sea_orm::entity::prelude::*;
-use std::fmt;
 
 use crate::database::task;
-// Define a new type that wraps DbErr
+/* // Define a new type that wraps DbErr
 pub struct MyDbErr(DbErr);
 
 impl fmt::Debug for MyDbErr {
@@ -17,15 +16,15 @@ impl fmt::Display for MyDbErr {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Display::fmt(&self.0, f)
     }
-}
+} */
 
 // Implement ResponseError for the new type
-impl ResponseError for MyDbErr {
+/* impl ResponseError for MyDbErr {
     fn error_response(&self) -> HttpResponse {
         // Customize the HTTP response based on the error
         HttpResponse::InternalServerError().json("Internal server error")
     }
-}
+} */
 
 /// get /task endpoint for retrieving a single TaskShort
 #[get("/task")]
@@ -38,7 +37,7 @@ async fn get_task_request(
     let task = task::Entity::find_by_id(req.task_id)
         .one(db.as_ref())
         .await
-        .map_err(|e| actix_web::error::ErrorInternalServerError(MyDbErr(e)))?;
+        .map_err(actix_web::error::ErrorInternalServerError)?;
     match task {
         Some(model) => Ok(web::Json(ReadTaskShortResponse {
             task_id: model.id,
