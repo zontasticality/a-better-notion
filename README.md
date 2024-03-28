@@ -16,6 +16,18 @@ Run server:
 cargo run -p server
 ```
 
+Run database:
+```
+cd server/database
+docker-compose up
+```
+
+this will create the server in a docker container. from there you can access it like a normal postgres database running on localhost:5432
+
+docker-compose should only be ran on the first instance to create the database, afterwards it should be started through docker normally.
+
+### Docs
+
 to read the documentation of a crate, run:
 
 ```
@@ -39,14 +51,6 @@ Please also format your rust code before submitting a PR:
 ```
 cargo fmt
 ```
-
-# database
-
-to create the database use ` docker-compose up` in the server/database directory
-
-this will create the server in a docker container. from there you can access it like a normal postgres database running on localhost:5432
-
-docker-compose should only be ran on the first instance to create the database, afterwards it should be started through docker normally.
 
 # Bug Tracking Instructions
 Bugs and issues are tracked with github issues. To view the list current bugs & issues, navigate to the github issues tab above. Issue show status, assignees, and open/closed. Github issues do not support adding priority and timeline to issues, but the issue tracker has a dropdown menu which allows issues to be sorted by number of comments and date created.
