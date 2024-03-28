@@ -4,11 +4,14 @@ Made in rust.
 
 Make sure you have rust installed for your specific platform (see: https://rustup.rs/)
 
-Run client:
+Run database:
+```
+cd server/database
+docker-compose up
+```
+This requires `docker`/`podman` and `docker-compose`/`podman-compose`. It will initialize a postgres database running on `localhost:5432`. (make sure to run in a dedicated terminal!)
 
-```
-cargo run -p client
-```
+`docker-compose` should only be run on the first instance to create the database, afterwards it should be started through docker normally.
 
 Run server:
 
@@ -16,15 +19,11 @@ Run server:
 cargo run -p server
 ```
 
-Run database:
-```
-cd server/database
-docker-compose up
-```
+Run client:
 
-this will create the server in a docker container. from there you can access it like a normal postgres database running on localhost:5432
-
-docker-compose should only be ran on the first instance to create the database, afterwards it should be started through docker normally.
+```
+cargo run -p client
+```
 
 ### Docs
 
